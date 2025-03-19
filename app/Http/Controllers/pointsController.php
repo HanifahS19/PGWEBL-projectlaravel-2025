@@ -40,6 +40,23 @@ class pointsController extends Controller
     {
         //untukmeangkap data dari form dan memasukan data ke database melalui model. menambah data baru
 
+        //validate request penting karena menjaga kualitas data yang diinputkan
+
+            $request->validate(
+                [
+                    'name' => 'required|unique:points,name',
+                    'description' => 'required',
+                    'geom_point' => 'required',
+                ],
+                [
+                    'name.required' => 'Name is required', // Perbaikan sintaks & typo
+                    'name.unique' => 'Name already exists', // Perbaikan typo
+                    'description.required' => 'Description is required',
+                    'geom_point' => 'Geometry Point is required',
+                ]
+            );
+
+
         $data=[
             'geom' =>$request->geom_point,
             'name' =>$request->name,
@@ -49,10 +66,13 @@ class pointsController extends Controller
         ];
 
         // insert data
-        $this->points->create($data);
+      if(!$this->points->create($data)) {
+
+        return redirect()->route('map')->with('error', 'Point failed to added');
+      }
 
         // redirec to map
-        return redirect()->route('map');
+        return redirect()->route('map')->with('success', 'Point has been added');
     }
 
     /**
