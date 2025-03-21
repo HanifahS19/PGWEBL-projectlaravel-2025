@@ -237,5 +237,73 @@
 
                 drawnItems.addLayer(layer);
             });
+
+            // geojson points
+            var point = L.geoJson(null, {
+				onEachFeature: function (feature, layer) {
+					var popupContent = "Nama: " + feature.properties.name + "<br>" +
+						"Deskripsi: " + feature.properties.description + "<br>" +
+                        "Dibuat:" + feature.properties.created_at;
+					layer.on({
+						click: function (e) {
+							point.bindPopup(popupContent);
+						},
+						mouseover: function (e) {
+							point.bindTooltip(feature.properties.name);
+						},
+					});
+				},
+			});
+			$.getJSON("{{route('api.points')}}", function (data) {
+				point.addData(data);
+				map.addLayer(point);
+			});
+
+
+            // geojson polylines
+            var polyline = L.geoJson(null, {
+				onEachFeature: function (feature, layer) {
+					var popupContent = "Nama: " + feature.properties.name + "<br>" +
+						"Deskripsi: " + feature.properties.description + "<br>" +
+                        "Panjang: " + feature.properties.length_km.toFixed() + "<br>" +
+                        "Dibuat:" + feature.properties.created_at;
+					layer.on({
+						click: function (e) {
+							polyline.bindPopup(popupContent);
+						},
+						mouseover: function (e) {
+							polyline.bindTooltip(feature.properties.name);
+						},
+					});
+				},
+			});
+			$.getJSON("{{route('api.polylines')}}", function (data) {
+				polyline.addData(data);
+				map.addLayer(polyline);
+			});
+
+
+            // geojson polylines
+            var poygons = L.geoJson(null, {
+				onEachFeature: function (feature, layer) {
+					var popupContent = "Nama: " + feature.properties.name + "<br>" +
+						"Deskripsi: " + feature.properties.description + "<br>" +
+                        "Luas: " + feature.properties.area_m2.toFixed(2) + "<br>" +
+                        "Dibuat:" + feature.properties.created_at;
+					layer.on({
+						click: function (e) {
+							poygons.bindPopup(popupContent);
+						},
+						mouseover: function (e) {
+							poygons.bindTooltip(feature.properties.name);
+						},
+					});
+				},
+			});
+			$.getJSON("{{route('api.poygons')}}", function (data) {
+				poygons.addData(data);
+				map.addLayer(poygons);
+			});
+
         </script>
     @endsection
