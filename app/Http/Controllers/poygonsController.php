@@ -39,20 +39,38 @@ class poygonsController extends Controller
                 'name' => 'required|unique:poygons,name',
                 'description' => 'required',
                 'geom_polygon' => 'required',
+                'image'=> 'nullable|mimes:jpeg,png,gif,svg|max:2000'
+
             ],
             [
                 'name.required' => 'Name is required', // Perbaikan sintaks & typo
                 'name.unique' => 'Name already exists', // Perbaikan typo
                 'description.required' => 'Description is required',
                 'geom_polygon' => 'Geometry Polygon is required',
+               
             ]
         );
+
+         // create images dir if not exist
+         if (!is_dir('storage/images')) {
+            mkdir('./storage/images', 0777);
+        }
+
+        // get image file
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $name_image = time() . "_polygons." . strtolower($image->getClientOriginalExtension());
+            $image->move('storage/images', $name_image);
+        } else {
+            $name_image = null;
+        }
 
 
     $data=[
         'geom' =>$request->geom_polygon,
         'name' =>$request->name,
         'description' =>$request->description,
+        'image' => $name_image,
 
 
     ];

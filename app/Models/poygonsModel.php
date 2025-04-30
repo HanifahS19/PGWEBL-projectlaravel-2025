@@ -18,7 +18,7 @@ class poygonsModel extends Model
             COALESCE(st_area(geom, true), 0) as area_m2,
             COALESCE(st_area(geom, true)/1000000, 0) as area_km2,
             COALESCE(st_area(geom, true)/10000, 0) as area_hektar,
-            name, description, created_at, updated_at'))
+            name, description, image, created_at, updated_at'))
             ->get();
 
         $geojson = [
@@ -38,6 +38,7 @@ class poygonsModel extends Model
                     'area_hektar' => $p->area_hektar,
                     'created_at' => $p->created_at,
                     'updated_at' => $p->updated_at,
+                    'image'=> $p->image,
                 ],
 
             ];

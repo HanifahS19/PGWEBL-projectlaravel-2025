@@ -32,8 +32,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <form method="POST" action="{{ route('points.store')}}">
-                    <div class="modal-body">
+                    <form method="POST" action="{{ route('points.store') }}" enctype="multipart/form-data">
+                        <div class="modal-body">
                             @csrf
 
                             <div class="mb-3">
@@ -53,20 +53,29 @@
                                 <textarea class="form-control" id="geom_point" name="geom_point" rows="3"></textarea>
                             </div>
 
-                    </div>
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Photo</label>
+                                <input type="file" class="form-control" id="image_point" name="image"
+                                    onchange="document.getElementById('preview-image-point').src = window.URL.createObjectURL(this.files[0])">
+                                <img src="" alt="" id="preview-image-point" class="img-thumbnail"
+                                    width="400" height="250" >
+                            </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
 
         <!-- Modal creaete Polylines -->
-        <div class="modal fade" id="createpolylineModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="createpolylineModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -74,8 +83,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <form method="POST" action="{{ route('polylines.store')}}">
-                    <div class="modal-body">
+                    <form method="POST" action="{{ route('polylines.store') }}" enctype="multipart/form-data">
+                        <div class="modal-body">
                             @csrf
 
                             <div class="mb-3">
@@ -95,20 +104,29 @@
                                 <textarea class="form-control" id="geom_polyline" name="geom_polyline" rows="3"></textarea>
                             </div>
 
-                    </div>
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Photo</label>
+                                <input type="file" class="form-control" id="image_polylines" name="image"
+                                    onchange="document.getElementById('preview-image-polylines').src = window.URL.createObjectURL(this.files[0])">
+                                <img src="" alt="" id="preview-image-polylines" class="img-thumbnail"
+                                    width="400">
+                            </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
 
 
         <!-- Modal creaete Polygon -->
-        <div class="modal fade" id="createpolygonModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="createpolygonModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -116,8 +134,8 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <form method="POST" action="{{ route('poygons.store')}}">
-                    <div class="modal-body">
+                    <form method="POST" action="{{ route('poygons.store') }}" enctype="multipart/form-data">
+                        <div class="modal-body">
                             @csrf
 
                             <div class="mb-3">
@@ -137,13 +155,21 @@
                                 <textarea class="form-control" id="geom_polygon" name="geom_polygon" rows="3"></textarea>
                             </div>
 
-                    </div>
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Photo</label>
+                                <input type="file" class="form-control" id="image_poygons" name="image"
+                                    onchange="document.getElementById('preview-image-poygons').src = window.URL.createObjectURL(this.files[0])">
+                                <img src="" alt="" id="preview-image-poygons" class="img-thumbnail"
+                                    width="400">
+                            </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                </form>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -240,70 +266,73 @@
 
             // geojson points
             var point = L.geoJson(null, {
-				onEachFeature: function (feature, layer) {
-					var popupContent = "Nama: " + feature.properties.name + "<br>" +
-						"Deskripsi: " + feature.properties.description + "<br>" +
-                        "Dibuat:" + feature.properties.created_at;
-					layer.on({
-						click: function (e) {
-							point.bindPopup(popupContent);
-						},
-						mouseover: function (e) {
-							point.bindTooltip(feature.properties.name);
-						},
-					});
-				},
-			});
-			$.getJSON("{{route('api.points')}}", function (data) {
-				point.addData(data);
-				map.addLayer(point);
-			});
+                onEachFeature: function(feature, layer) {
+                    var popupContent = "Nama: " + feature.properties.name + "<br>" +
+                        "Deskripsi: " + feature.properties.description + "<br>" +
+                        "Dibuat:" + feature.properties.created_at + "<br>" +
+                        "<img src='{{ asset('storage/images')}}/" + feature.properties.image +"' width='250' alt=''>";
+
+                    layer.on({
+                        click: function(e) {
+                            point.bindPopup(popupContent);
+                        },
+                        mouseover: function(e) {
+                            point.bindTooltip(feature.properties.name);
+                        },
+                    });
+                },
+            });
+            $.getJSON("{{ route('api.points') }}", function(data) {
+                point.addData(data);
+                map.addLayer(point);
+            });
 
 
             // geojson polylines
             var polyline = L.geoJson(null, {
-				onEachFeature: function (feature, layer) {
-					var popupContent = "Nama: " + feature.properties.name + "<br>" +
-						"Deskripsi: " + feature.properties.description + "<br>" +
+                onEachFeature: function(feature, layer) {
+                    var popupContent = "Nama: " + feature.properties.name + "<br>" +
+                        "Deskripsi: " + feature.properties.description + "<br>" +
                         "Panjang: " + feature.properties.length_km.toFixed() + "<br>" +
-                        "Dibuat:" + feature.properties.created_at;
-					layer.on({
-						click: function (e) {
-							polyline.bindPopup(popupContent);
-						},
-						mouseover: function (e) {
-							polyline.bindTooltip(feature.properties.name);
-						},
-					});
-				},
-			});
-			$.getJSON("{{route('api.polylines')}}", function (data) {
-				polyline.addData(data);
-				map.addLayer(polyline);
-			});
+                        "Dibuat:" + feature.properties.created_at + "<br>" +
+                        "<img src='{{ asset('storage/images')}}/" + feature.properties.image +"' width='250' alt=''>";
+                    layer.on({
+                        click: function(e) {
+                            polyline.bindPopup(popupContent);
+                        },
+                        mouseover: function(e) {
+                            polyline.bindTooltip(feature.properties.name);
+                        },
+                    });
+                },
+            });
+            $.getJSON("{{ route('api.polylines') }}", function(data) {
+                polyline.addData(data);
+                map.addLayer(polyline);
+            });
 
 
             // geojson polylines
             var poygons = L.geoJson(null, {
-				onEachFeature: function (feature, layer) {
-					var popupContent = "Nama: " + feature.properties.name + "<br>" +
-						"Deskripsi: " + feature.properties.description + "<br>" +
+                onEachFeature: function(feature, layer) {
+                    var popupContent = "Nama: " + feature.properties.name + "<br>" +
+                        "Deskripsi: " + feature.properties.description + "<br>" +
                         "Luas: " + feature.properties.area_m2.toFixed(2) + "<br>" +
-                        "Dibuat:" + feature.properties.created_at;
-					layer.on({
-						click: function (e) {
-							poygons.bindPopup(popupContent);
-						},
-						mouseover: function (e) {
-							poygons.bindTooltip(feature.properties.name);
-						},
-					});
-				},
-			});
-			$.getJSON("{{route('api.poygons')}}", function (data) {
-				poygons.addData(data);
-				map.addLayer(poygons);
-			});
-
+                        "Dibuat:" + feature.properties.created_at + "<br>" +
+                        "<img src='{{ asset('storage/images')}}/" + feature.properties.image +"' width='250' alt=' '>";
+                    layer.on({
+                        click: function(e) {
+                            poygons.bindPopup(popupContent);
+                        },
+                        mouseover: function(e) {
+                            poygons.bindTooltip(feature.properties.name);
+                        },
+                    });
+                },
+            });
+            $.getJSON("{{ route('api.poygons') }}", function(data) {
+                poygons.addData(data);
+                map.addLayer(poygons);
+            });
         </script>
     @endsection

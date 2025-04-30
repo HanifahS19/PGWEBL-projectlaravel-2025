@@ -11,7 +11,6 @@ class pointsController extends Controller
     public function __construct()
     {
         $this->points = new PointsModel();
-
     }
     /**
      * Display a listing of the resource.
@@ -42,34 +41,49 @@ class pointsController extends Controller
 
         //validate request penting karena menjaga kualitas data yang diinputkan
 
-            $request->validate(
-                [
-                    'name' => 'required|unique:points,name',
-                    'description' => 'required',
-                    'geom_point' => 'required',
-                ],
-                [
-                    'name.required' => 'Name is required', // Perbaikan sintaks & typo
-                    'name.unique' => 'Name already exists', // Perbaikan typo
-                    'description.required' => 'Description is required',
-                    'geom_point' => 'Geometry Point is required',
-                ]
-            );
+        $request->validate(
+            [
+                'name' => 'required|unique:points,name', // sesuai name input
+                'description' => 'required',
+                'geom_point' => 'required',
+                'image'=> 'nullable|mimes:jpeg,png,gif,svg|max:2000'
+
+            ],
+            [
+                'name.required' => 'Name is required', // Perbaikan sintaks & typo
+                'name.unique' => 'Name already exists', // Perbaikan typo
+                'description.required' => 'Description is required',
+                'geom_point' => 'Geometry Point is required',
+            ]
+        );
+
+        // create images dir if not exist
+        if (!is_dir('storage/images')) {
+            mkdir('./storage/images', 0777);
+        }
+
+        // get image file
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $name_image = time() . "_point." . strtolower($image->getClientOriginalExtension());
+            $image->move('storage/images', $name_image);
+        } else {
+            $name_image = null;
+        }
 
 
-        $data=[
-            'geom' =>$request->geom_point,
-            'name' =>$request->name,
-            'description' =>$request->description,
-
-
+        $data = [
+            'geom' => $request->geom_point,
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $name_image,
         ];
 
         // insert data
-      if(!$this->points->create($data)) {
+        if (!$this->points->create($data)) {
 
-        return redirect()->route('map')->with('error', 'Point failed to added');
-      }
+            return redirect()->route('map')->with('error', 'Point failed to added');
+        }
 
         // redirec to map
         return redirect()->route('map')->with('success', 'Point has been added');
