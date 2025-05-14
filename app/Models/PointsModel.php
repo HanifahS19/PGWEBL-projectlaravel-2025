@@ -17,27 +17,62 @@ class PointsModel extends Model
             ->select(DB::raw('id, st_asgeojson(geom) as geom, name, description, image, created_at, updated_at'))
             ->get();
 
-            $geojson = [
-                'type'=>'FeatureCollecion',
-                'features'=>[]
+        $geojson = [
+            'type' => 'FeatureCollecion',
+            'features' => []
+        ];
+
+        foreach ($points as $p) {
+            $feature = [
+                'type' => 'Feature',
+                'geometry' => json_decode($p->geom),
+                'properties' => [
+                    'id' => $p->id,
+                    'name' => $p->name,
+                    'description' => $p->description,
+                    'created_at' => $p->created_at,
+                    'updated_at' => $p->updated_at,
+                    'image' => $p->image,
+                ],
+
             ];
 
-            foreach ($points as $p){
-                $feature = [
-                    'type' => 'Feature',
-                    'geometry' => json_decode($p->geom),
-                    'properties' =>[
-                        'name' =>$p->name,
-                        'description' =>$p->description,
-                        'created_at' =>$p->created_at,
-                        'updated_at' =>$p->updated_at,
-                        'image'=> $p->image,
-                    ],
+            array_push($geojson['features'], $feature);
+        }
 
-                ];
+        return $geojson;
+    }
 
-                array_push($geojson['features'], $feature);
-            }
+
+    public function gejson_point($id)
+    {
+        $point = $this
+            ->select(DB::raw('id, st_asgeojson(geom) as geom, name, description, image, created_at, updated_at'))
+            ->where('id', $id)
+            ->get();
+
+        $geojson = [
+            'type' => 'FeatureCollecion',
+            'features' => []
+        ];
+
+        foreach ($point as $p) {
+            $feature = [
+                'type' => 'Feature',
+                'geometry' => json_decode($p->geom),
+                'properties' => [
+                    'id' => $p->id,
+                    'name' => $p->name,
+                    'description' => $p->description,
+                    'created_at' => $p->created_at,
+                    'updated_at' => $p->updated_at,
+                    'image' => $p->image,
+                ],
+
+            ];
+
+            array_push($geojson['features'], $feature);
+        }
 
         return $geojson;
     }

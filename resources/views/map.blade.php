@@ -58,7 +58,7 @@
                                 <input type="file" class="form-control" id="image_point" name="image"
                                     onchange="document.getElementById('preview-image-point').src = window.URL.createObjectURL(this.files[0])">
                                 <img src="" alt="" id="preview-image-point" class="img-thumbnail"
-                                    width="400" height="250" >
+                                    width="400" height="250">
                             </div>
 
                         </div>
@@ -264,13 +264,37 @@
                 drawnItems.addLayer(layer);
             });
 
-            // geojson points
+            // geojson points pop up konten
             var point = L.geoJson(null, {
                 onEachFeature: function(feature, layer) {
+
+                    var routedelete = "{{ route('points.destroy', ':id') }}";
+                    routedelete = routedelete.replace(':id', feature.properties.id);
+
+                    var routeedit = "{{ route('points.edit', ':id') }}";
+                    routeedit = routeedit.replace(':id', feature.properties.id);
+
                     var popupContent = "Nama: " + feature.properties.name + "<br>" +
                         "Deskripsi: " + feature.properties.description + "<br>" +
                         "Dibuat:" + feature.properties.created_at + "<br>" +
-                        "<img src='{{ asset('storage/images')}}/" + feature.properties.image +"' width='250' alt=''>";
+                        "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
+                        "' width='250' alt=''>" + "<br>" +
+
+                        "<div class='row mt-4'>" +
+                        "<div class='col-6 text-end'>" +
+
+                        "<a href='" + routeedit + "' class='btn btn-warning btn-sm'><i class='fa-solid fa-pen-to-square'></i></a>" +
+
+                        "</div>" +
+                        "<div class='col-6'>" +
+
+                        "<form method='POST' action=' " + routedelete + "'>" +
+                        '@csrf' + '@method('DELETE')' +
+                        "<button type='submit' class='btn btn-danger btn-sm' onclick='return confirm(`yakin akan dihapus?`)'><i class='fa-solid fa-trash-can'></i></button>"; +
+                    "</form>" +
+
+                    "</div>" +
+                    "</div>"
 
                     layer.on({
                         click: function(e) {
@@ -291,11 +315,38 @@
             // geojson polylines
             var polyline = L.geoJson(null, {
                 onEachFeature: function(feature, layer) {
+
+
+                    var routedelete = "{{ route('polylines.destroy', ':id') }}";
+                    routedelete = routedelete.replace(':id', feature.properties.id);
+
+                    var routeedit = "{{ route('polylines.edit', ':id') }}";
+                    routeedit = routeedit.replace(':id', feature.properties.id);
+
                     var popupContent = "Nama: " + feature.properties.name + "<br>" +
                         "Deskripsi: " + feature.properties.description + "<br>" +
                         "Panjang: " + feature.properties.length_km.toFixed() + "<br>" +
                         "Dibuat:" + feature.properties.created_at + "<br>" +
-                        "<img src='{{ asset('storage/images')}}/" + feature.properties.image +"' width='250' alt=''>";
+                        "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
+                        "' width='250' alt=''>" + "<br>" +
+
+                        "<div class='row mt-4'>" +
+                        "<div class='col-6 text-end'>" +
+
+                        "<a href='" + routeedit + "' class='btn btn-warning btn-sm'><i class='fa-solid fa-pen-to-square'></i></a>" +
+
+                        "</div>" +
+                        "<div class='col-6'>" +
+
+                        "<form method='POST' action=' " + routedelete + "'>" +
+                        '@csrf' + '@method('DELETE')' +
+                        "<button type='submit' class='btn btn-danger btn-sm' onclick='return confirm(`yakin akan dihapus?`)'><i class='fa-solid fa-trash-can'></i></button>"; +
+                    "</form>" +
+
+                    "</div>" +
+                    "</div>"
+
+
                     layer.on({
                         click: function(e) {
                             polyline.bindPopup(popupContent);
@@ -315,11 +366,37 @@
             // geojson polylines
             var poygons = L.geoJson(null, {
                 onEachFeature: function(feature, layer) {
+
+                    var routedelete = "{{ route('poygons.destroy', ':id') }}";
+                    routedelete = routedelete.replace(':id', feature.properties.id);
+
+                    var routeedit = "{{ route('poygons.edit', ':id') }}";
+                    routeedit = routeedit.replace(':id', feature.properties.id);
+
+
                     var popupContent = "Nama: " + feature.properties.name + "<br>" +
                         "Deskripsi: " + feature.properties.description + "<br>" +
                         "Luas: " + feature.properties.area_m2.toFixed(2) + "<br>" +
                         "Dibuat:" + feature.properties.created_at + "<br>" +
-                        "<img src='{{ asset('storage/images')}}/" + feature.properties.image +"' width='250' alt=' '>";
+                        "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
+                        "' width='250' alt=' '>" + "<br>" +
+
+                        "<div class='row mt-4'>" +
+                        "<div class='col-6 text-end'>" +
+
+                        "<a href='" + routeedit + " ' class='btn btn-warning btn-sm'><i class='fa-solid fa-pen-to-square'></i></a>" +
+
+                        "</div>" +
+                        "<div class='col-6'>" +
+
+                        "<form method='POST' action=' " + routedelete + "'>" +
+                        '@csrf' + '@method('DELETE')' +
+                        "<button type='submit' class='btn btn-danger btn-sm' onclick='return confirm(`yakin akan dihapus?`)'><i class='fa-solid fa-trash-can'></i></button>"; +
+                    "</form>" +
+                    "</div>" +
+                    "</div>"
+
+
                     layer.on({
                         click: function(e) {
                             poygons.bindPopup(popupContent);

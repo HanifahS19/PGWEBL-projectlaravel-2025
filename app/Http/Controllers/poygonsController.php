@@ -39,7 +39,7 @@ class poygonsController extends Controller
                 'name' => 'required|unique:poygons,name',
                 'description' => 'required',
                 'geom_polygon' => 'required',
-                'image'=> 'nullable|mimes:jpeg,png,gif,svg|max:2000'
+                'image' => 'nullable|mimes:jpeg,png,gif,svg|max:2000'
 
             ],
             [
@@ -47,12 +47,12 @@ class poygonsController extends Controller
                 'name.unique' => 'Name already exists', // Perbaikan typo
                 'description.required' => 'Description is required',
                 'geom_polygon' => 'Geometry Polygon is required',
-               
+
             ]
         );
 
-         // create images dir if not exist
-         if (!is_dir('storage/images')) {
+        // create images dir if not exist
+        if (!is_dir('storage/images')) {
             mkdir('./storage/images', 0777);
         }
 
@@ -66,25 +66,23 @@ class poygonsController extends Controller
         }
 
 
-    $data=[
-        'geom' =>$request->geom_polygon,
-        'name' =>$request->name,
-        'description' =>$request->description,
-        'image' => $name_image,
+        $data = [
+            'geom' => $request->geom_polygon,
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $name_image,
 
 
-    ];
+        ];
 
-    // insert data
-  if(!$this->poygons->create($data)) {
+        // insert data
+        if (!$this->poygons->create($data)) {
 
-    return redirect()->route('map')->with('error', 'Polygon failed to added');
-  }
+            return redirect()->route('map')->with('error', 'Polygon failed to added');
+        }
 
-    // redirec to map
-    return redirect()->route('map')->with('success', 'Polygon has been added');
-
-
+        // redirec to map
+        return redirect()->route('map')->with('success', 'Polygon has been added');
     }
 
     /**
@@ -100,7 +98,11 @@ class poygonsController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data=[
+            'title'=>'Edit poygon',
+            'id'=>$id,
+        ];
+       return view('edit-poygon', $data);
     }
 
     /**
@@ -116,6 +118,20 @@ class poygonsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+
+        $imagefile = $this->poygons->find($id)->image;
+
+        if (!$this->poygons->destroy($id)) {
+            return redirect()->route('map')->with('error', 'poygons failed to delete');
+        }
+
+        // delete iamge
+        if ($imagefile != null) {
+            if (file_exists('./storage/images/' . $imagefile)) {
+                unlink('./storage/images/' . $imagefile);
+            }
+        }
+
+        return redirect()->route('map')->with('success', 'poygons has been delete');
     }
 }
