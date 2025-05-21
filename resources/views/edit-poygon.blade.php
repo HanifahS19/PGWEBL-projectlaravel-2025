@@ -33,9 +33,10 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <form method="POST" action="{{ route('poygons.store') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('poygons.update', $id) }}" enctype="multipart/form-data">
                         <div class="modal-body">
                             @csrf
+                            @method('PATCH')
 
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name</label>
@@ -56,9 +57,9 @@
 
                             <div class="mb-3">
                                 <label for="image" class="form-label">Photo</label>
-                                <input type="file" class="form-control" id="image_poygons" name="image"
-                                    onchange="document.getElementById('preview-image-poygons').src = window.URL.createObjectURL(this.files[0])">
-                                <img src="" alt="" id="preview-image-poygons" class="img-thumbnail"
+                                <input type="file" class="form-control" id="image_poygon" name="image"
+                                    onchange="document.getElementById('preview-image-poygon').src = window.URL.createObjectURL(this.files[0])">
+                                <img src="" alt="" id="preview-image-poygon" class="img-thumbnail"
                                     width="400">
                             </div>
 
@@ -137,7 +138,7 @@
                     $('#name').val(properties.name);
                     $('#description').val(properties.description);
                     $('#geom_polygon').val(objectGeometry);
-                    $('#preview-image-polygon').attr('src', "{{ asset('storage/images') }}/" + properties.image);
+                    $('#preview-image-poygon').attr('src', "{{ asset('storage/images') }}/" + properties.image);
 
                     $('#editpoygonModal').modal('show')
                 });
@@ -165,7 +166,7 @@
                             $('#name').val(properties.name);
                             $('#description').val(properties.description);
                             $('#geom_polygon').val(objectGeometry);
-                            $('#preview-image-polygon').attr('src', "{{ asset('storage/images') }}/" +
+                            $('#preview-image-poygon').attr('src', "{{ asset('storage/images') }}/" +
                                 properties.image);
                             // menampilkan modaledit
                             $('#editpoygonModal').modal('show')
@@ -177,8 +178,8 @@
             });
             $.getJSON("{{ route('api.poygon', $id) }}", function(data) {
                 polygon.addData(data);
-                map.addLayer(poygons);
-                map.fitBounds(poygons.getBounds(), {
+                map.addLayer(polygon);
+                map.fitBounds(polygon.getBounds(), {
                     padding: [100, 100]
                 });
 

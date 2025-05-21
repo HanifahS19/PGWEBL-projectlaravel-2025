@@ -114,7 +114,65 @@ class pointsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //mirip store
+       $request->validate(
+            [
+                'name' => 'required|unique:points,name,' . $id, // sesuai name input
+                'description' => 'required',
+                'geom_point' => 'required',
+                'image' => 'nullable|mimes:jpeg,png,gif,svg|max:2000'
+
+            ],
+            [
+                'name.required' => 'Name is required', // Perbaikan sintaks & typo
+                'name.unique' => 'Name already exists', // Perbaikan typo
+                'description.required' => 'Description is required',
+                'geom_point' => 'Geometry Point is required',
+            ]
+        );
+
+        // create images dir if not exist
+        if (!is_dir('storage/images')) {
+            mkdir('./storage/images', 0777);
+        }
+
+        // Get olde image file name
+        $old_image = $this->points->find($id)->image;
+
+
+        // get image file
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $name_image = time() . "_point." . strtolower($image->getClientOriginalExtension());
+            $image->move('storage/images', $name_image);
+
+            // delete old image
+          if ($old_image != null){
+            if (file_exists('./storage/images/' . $old_image)){
+                unlink('./storage/images/' . $old_image);
+            }
+          }
+
+
+        } else {
+            $name_image = $old_image;
+        }
+
+
+        $data = [
+            'geom' => $request->geom_point,
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $name_image,
+        ];
+
+        // insert data
+        if (!$this->points->find($id)->update($data)) {
+
+            return redirect()->route('map')->with('error', 'Point failed to update');
+        }
+
+        // redirec to map
+        return redirect()->route('map')->with('success', 'Point has been update');
     }
 
     /**
