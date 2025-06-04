@@ -14,11 +14,12 @@ class poygonsModel extends Model
     public function gejson_poygons()
     {
         $poygons = $this
-            ->select(DB::raw('id, st_asgeojson(geom) as geom,
+            ->select(DB::raw('poygons.id, st_asgeojson(poygons.geom) as geom,
             COALESCE(st_area(geom, true), 0) as area_m2,
             COALESCE(st_area(geom, true)/1000000, 0) as area_km2,
             COALESCE(st_area(geom, true)/10000, 0) as area_hektar,
-            name, description, image, created_at, updated_at'))
+            poygons.name, poygons.description, poygons.image, poygons.created_at, poygons.updated_at, poygons.user_id, users.name as user_created'))
+            ->leftJoin('users', 'poygons.user_id','=', 'users.id')
             ->get();
 
         $geojson = [
@@ -40,6 +41,8 @@ class poygonsModel extends Model
                     'created_at' => $p->created_at,
                     'updated_at' => $p->updated_at,
                     'image'=> $p->image,
+                    'user_id'=>$p->user_id,
+                    'user_created'=>$p->user_created,
                 ],
 
             ];
