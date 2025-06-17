@@ -20,8 +20,12 @@ class TableController extends Controller
         $data = [
             'title' => 'Table',
             'points'=>$this->points->all(),
+            'polylines'=>$this->polylines->all(),
+            'poygons'=>$this->poygons->all(),
+
 
         ];
+        
         return view('table', $data);
     }
 }
